@@ -1,5 +1,10 @@
-import { setTimeout } from "node:timers/promises";
+import { sql } from "./db/db.js";
+import "./http/server.js";
 
-console.log("Hello");
+async function listenDbChanges() {
+  await sql.subscribe("insert:outbox", (row, info) => {
+    console.log(row);
+  });
+}
 
-await setTimeout(2000);
+listenDbChanges().catch(console.error);

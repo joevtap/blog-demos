@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS orders (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL,
   product_id INTEGER NOT NULL,
-  quantity INTEGER NOT NULL,
+  amount INTEGER NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending'::TEXT,
   created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
@@ -16,3 +16,7 @@ CREATE TABLE IF NOT EXISTS outbox (
   created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
   processed_at TIMESTAMP WITHOUT TIME ZONE NULL
 );
+
+CREATE INDEX idx_outbox_unprocessed ON outbox (processed_at, created_at) WHERE processed_at IS NULL;
+
+CREATE PUBLICATION alltables FOR ALL TABLES

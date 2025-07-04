@@ -14,6 +14,8 @@ FROM node:22.17-alpine
 
 ENV NODE_ENV=production
 
+EXPOSE 8080
+
 WORKDIR /app
 
 COPY --from=build /app/dist ./dist
