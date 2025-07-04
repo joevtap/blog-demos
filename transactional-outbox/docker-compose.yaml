@@ -1,0 +1,34 @@
+services:
+  orders:
+    build:
+      context: .
+      dockerfile: orders.Dockerfile
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/demo
+    depends_on: [db, broker]
+
+  db:
+    image: postgres:17.5-alpine3.21
+    restart: unless-stopped
+    ports: [5432:5432]
+    volumes: 
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - pgdata:/var/lib/postgresql/data]
+    environment:
+      POSTGRES_DB: demo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  broker:
+    image: nats:2.11.5-alpine3.22
+    ports: [4222:4222, 8222:8222]
+    volumes:
+      - natsdata:/data
+    command: 
+      - "--js"
+      - "--sd=/data"
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  natsdata:
