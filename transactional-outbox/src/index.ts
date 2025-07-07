@@ -1,10 +1,20 @@
-import { sql } from "./db/db.js";
 import "./http/server.js";
+import { pollingPublisher } from "./polling-publisher.js";
+import { postgresJsSubscribe } from "./using-postgresjs-subscribe.js";
 
-async function listenDbChanges() {
-  await sql.subscribe("insert:outbox", (row, info) => {
-    console.log(row);
-  });
+if (!process.env.STRATEGY) {
+  throw new Error("STRATEGY environment variable is missing");
 }
 
-listenDbChanges().catch(console.error);
+const strategy: string = process.env.STRATEGY;
+
+switch (strategy) {
+  case "subscribe":
+    postgresJsSubscribe().catch(console.error);
+    break;
+  case "polling":
+    pollingPublisher().catch(console.error);
+    break;
+  default:
+    pollingPublisher().catch(console.error);
+}

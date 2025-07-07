@@ -8,7 +8,7 @@ import {
 import { z } from "zod/v4";
 import { sql } from "../db/db.js";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import { randomUUID } from "node:crypto";
+import { placeOrder } from "../db/queries/place-order.query.js";
 
 const app = Fastify();
 
@@ -35,41 +35,13 @@ app.withTypeProvider<ZodTypeProvider>().route({
   },
   handler: async (request, reply) => {
     try {
-      await sql.begin(async (sql) => {
-        const { userId, productId, amount } = request.body;
-
-        await sql`INSERT INTO orders (
-          user_id,
-          product_id,
-          amount
-        ) VALUES (
-          ${userId},
-          ${productId},
-          ${amount}
-        )`;
-
-        await sql`INSERT INTO outbox (
-          key,
-          event_type,
-          payload
-        ) VALUES (
-          ${randomUUID()},
-          ${"order-placed"},
-          ${JSON.stringify({
-            userId,
-            productId,
-            amount,
-            timestamp: new Date().toISOString(),
-          })}
-        )`;
-
-        reply.send({
-          message: "order placed",
-        });
+      await sql.begin(async (tx) => {
+        await placeOrder(tx, request.body);
+        reply.send({ message: "order placed" });
       });
     } catch (error) {
-      console.error("Database error:", error);
-      reply.status(500).send({ error: "database error" });
+      console.log(error);
+      reply.status(500).send({ error: "internal server error" });
     }
   },
 });

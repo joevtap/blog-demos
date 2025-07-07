@@ -33,7 +33,16 @@ services:
       - "--js"
       - "--sd=/data"
     restart: unless-stopped
+  
+  debezium:
+    image: quay.io/debezium/server:3.2
+    ports: [8081:8080]
+    volumes:
+      - ./debezium-conf.d/:/debezium/config/
+      - debeziumdata:/debezium/data
+    depends_on: [db]
 
 volumes:
   pgdata:
   natsdata:
+  debeziumdata:
