@@ -8,14 +8,26 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 
 CREATE TABLE outbox (
+  -----------------------------------------------------
   ---- Debezium Outbox Event Router required BEGIN ----
+
   id SERIAL PRIMARY KEY,
   aggregate_id TEXT NOT NULL,
   aggregate_type TEXT NOT NULL, 
   payload JSONB NOT NULL,
-  ----  Debezium Outbox Event Router required END  ----
-  event_type TEXT NOT NULL,
-  sequence_number INTEGER NOT NULL, 
+
+  ---- Debezium Outbox Event Router required END ------
+  -----------------------------------------------------
+  
+  ---------------------------------------------------------------
+  ---- Could be placed here or in the payload column as JSON ----
+
+  -- event_type TEXT NOT NULL,
+  -- sequence_number INTEGER NOT NULL, 
+
+  ---- I decided to place in the payload column -----------------
+  ---------------------------------------------------------------
+
   created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
   processed_at TIMESTAMP WITHOUT TIME ZONE NULL
 );
