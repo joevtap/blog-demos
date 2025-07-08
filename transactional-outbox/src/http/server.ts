@@ -20,7 +20,6 @@ app.withTypeProvider<ZodTypeProvider>().route({
   url: "/orders/place",
   schema: {
     body: z.object({
-      userId: z.number().int(),
       productId: z.number().int(),
       amount: z.number().int(),
     }),

@@ -15,24 +15,20 @@ CREATE TABLE outbox (
   aggregate_id TEXT NOT NULL,
   aggregate_type TEXT NOT NULL, 
   payload JSONB NOT NULL,
+  sequence_number INTEGER DEFAULT 0, 
 
   ---- Debezium Outbox Event Router required END ------
   -----------------------------------------------------
-  
-  ---------------------------------------------------------------
-  ---- Could be placed here or in the payload column as JSON ----
-
-  -- event_type TEXT NOT NULL,
-  -- sequence_number INTEGER NOT NULL, 
-
-  ---- I decided to place in the payload column -----------------
-  ---------------------------------------------------------------
 
   created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-  processed_at TIMESTAMP WITHOUT TIME ZONE NULL
+  processed_at TIMESTAMP WITHOUT TIME ZONE NULL,
+
+  UNIQUE (aggregate_id, sequence_number)
 );
 
-CREATE UNIQUE INDEX idx_outbox_entity_sequence ON outbox (aggregate_id, sequence_number);
-CREATE INDEX idx_outbox_unprocessed ON outbox (processed_at, created_at) WHERE processed_at IS NULL;
+CREATE INDEX idx_outbox_unprocessed 
+ON outbox (processed_at, created_at)
+INCLUDE (id, aggregate_id, aggregate_type, sequence_number, payload)
+WHERE processed_at IS NULL;
 
 CREATE PUBLICATION publication FOR ALL TABLES;

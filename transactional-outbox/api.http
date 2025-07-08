@@ -2,8 +2,7 @@ POST http://localhost:8080/orders/place HTTP/1.1
 content-type: application/json
 
 {
-  "userId": 1,
-  "productId": 32,
+  "productId": 42,
   "amount": 1
 }
 

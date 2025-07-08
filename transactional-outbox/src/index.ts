@@ -1,6 +1,5 @@
 import "./http/server.js";
 import { pollingPublisher } from "./polling-publisher.js";
-import { postgresJsSubscribe } from "./using-postgresjs-subscribe.js";
 
 if (!process.env.STRATEGY) {
   throw new Error("STRATEGY environment variable is missing");
@@ -9,8 +8,8 @@ if (!process.env.STRATEGY) {
 const strategy: string = process.env.STRATEGY;
 
 switch (strategy) {
-  case "subscribe":
-    postgresJsSubscribe().catch(console.error);
+  case "logtailing":
+    console.log("Log Tailing strategy selected, start Debezium container");
     break;
   case "polling":
     pollingPublisher().catch(console.error);
