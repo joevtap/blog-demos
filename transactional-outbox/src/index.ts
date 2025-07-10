@@ -5,7 +5,7 @@ if (!process.env.STRATEGY) {
   throw new Error("STRATEGY environment variable is missing");
 }
 
-const strategy: string = process.env.STRATEGY;
+const strategy = process.env.STRATEGY;
 
 switch (strategy) {
   case "logtailing":
