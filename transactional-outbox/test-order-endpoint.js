@@ -10,7 +10,7 @@ function getRandomOrder() {
 async function sendOrder() {
   const order = getRandomOrder();
   try {
-    const res = await fetch("http://localhost:8080/orders/place", {
+    const res = await fetch("http://localhost:8080/orders", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(order),

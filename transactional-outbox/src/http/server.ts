@@ -17,7 +17,7 @@ app.setSerializerCompiler(serializerCompiler);
 
 app.withTypeProvider<ZodTypeProvider>().route({
   method: "POST",
-  url: "/orders/place",
+  url: "/orders",
   schema: {
     body: z.object({
       productId: z.number().int(),

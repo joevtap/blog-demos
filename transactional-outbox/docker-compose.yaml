@@ -5,6 +5,9 @@ services:
       dockerfile: orders.Dockerfile
     ports: [8080:8080]
     environment:
+      BATCH_SIZE: 10
+      POLL_INTERVAL: 1000
+      STRATEGY: logtailing
       DATABASE_URL: postgres://postgres:postgres@db:5432/demo
     depends_on: [db, broker]
 

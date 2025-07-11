@@ -13,22 +13,16 @@ const POLL_INTERVAL = parseInt(process.env.POLL_INTERVAL, 10);
 
 export async function pollingPublisher() {
   while (true) {
-    const error = await tryPollingAndPublishing();
-
-    if (error) console.log(error);
+    try {
+      await sql.begin(async (tx) => {
+        const events = await getEvents(tx);
+        await publishEvents(tx, events);
+      });
+    } catch (err) {
+      console.error(err);
+    }
 
     await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL));
-  }
-}
-
-async function tryPollingAndPublishing() {
-  try {
-    await sql.begin(async (tx) => {
-      const events = await getEvents(tx);
-      await publishEvents(tx, events);
-    });
-  } catch (err) {
-    return new Error(`Polling failed: ${err}`);
   }
 }
 
@@ -62,7 +56,7 @@ async function publishEvents(tx: TransactionSql, events: RowList<Row[]>) {
         WHERE id = ${event.id}
       `;
     } catch (err) {
-      console.log(`Error when publishing event: ${err}`);
+      console.error(`Error when publishing event: ${err}`);
     }
   }
 }

@@ -30,5 +30,3 @@ CREATE INDEX idx_outbox_unprocessed
 ON outbox (processed_at, created_at)
 INCLUDE (id, aggregate_id, aggregate_type, sequence_number, payload)
 WHERE processed_at IS NULL;
-
-CREATE PUBLICATION publication FOR ALL TABLES;
